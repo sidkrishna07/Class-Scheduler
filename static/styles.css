@@ -1,0 +1,245 @@
+/* General Body Styling */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #e9f0f7;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+/* Container Styling */
+.container {
+    max-width: 800px;
+    width: 100%;
+    background-color: #ffffff;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    margin: 5rem auto 2rem;
+}
+
+/* Container Styling for Login Form */
+.login-container {
+    max-width: 400px;
+    width: 100%;
+    background-color: #ffffff;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+/* Login Form Title */
+.login-container h1 {
+    font-size: 1.5rem;
+    color: #2f4f6f;
+    margin-bottom: 1rem;
+    font-weight: bold;
+}
+
+/* Login Form Styling */
+.login-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.login-form label {
+    font-size: 1rem;
+    color: #2f4f6f;
+    margin-top: 1rem;
+    align-self: flex-start;
+}
+
+.login-form input[type="text"],
+.login-form input[type="password"] {
+    width: 100%;
+    padding: 0.8rem;
+    margin: 0.5rem 0;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1rem;
+}
+
+.login-form input[type="text"]:focus,
+.login-form input[type="password"]:focus {
+    border-color: #467fcf;
+    outline: none;
+}
+
+.login-form button {
+    width: 100%;
+    padding: 0.8rem;
+    background-color: #467fcf;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    font-size: 1rem;
+    cursor: pointer;
+    font-weight: bold;
+    margin-top: 1rem;
+}
+
+.login-form button:hover {
+    background-color: #3a6cbf;
+}
+
+/* Additional Message Styling */
+.login-message {
+    font-size: 0.9rem;
+    color: #666;
+    margin-top: 1rem;
+}
+
+/* Header Styling */
+.header {
+    width: 100%;
+    background-color: #2f4f6f;
+    color: #fff;
+    padding: 1rem 0;
+    display: flex;
+    justify-content: center;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 10;
+}
+
+.header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1200px;
+    width: 100%;
+    padding: 0 2rem;
+}
+
+.header h1, .header h2 {
+    font-size: 1.2rem;
+    margin: 0;
+    color: #ffdbdb;
+}
+
+.sign-out {
+    color: #ffbdbd;
+    text-decoration: none;
+    font-weight: bold;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    background-color: #4f6f8f;
+}
+
+.sign-out:hover {
+    color: #fff;
+    background-color: #3f5f7f;
+}
+
+/* Tabs Styling */
+.tabs {
+    display: flex;
+    justify-content: center;
+    margin: 1.5rem 0;
+    border-bottom: 2px solid #ccc;
+}
+
+.tab-button {
+    padding: 0.8rem 1.5rem;
+    background-color: #467fcf;
+    color: #fff;
+    border: none;
+    border-radius: 4px 4px 0 0;
+    cursor: pointer;
+    font-weight: bold;
+    margin: 0 0.2rem;
+    transition: background-color 0.3s ease;
+    text-decoration: none;
+}
+
+.tab-button.active {
+    background-color: #2f4f6f;
+}
+
+.tab-button:hover {
+    background-color: #3a6cbf;
+}
+
+/* Table Styling */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+    text-align: center;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+th, td {
+    border: 1px solid #ddd;
+    padding: 1rem;
+}
+
+th {
+    background-color: #467fcf;
+    color: #fff;
+    font-weight: bold;
+}
+
+tr:nth-child(even) {
+    background-color: #f4f8fc;
+}
+
+tr:hover {
+    background-color: #e0ebf5;
+}
+
+/* Enroll/Unenroll Button Styling */
+.enroll-button, .unenroll-button {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    margin-top: 10px;
+    text-decoration: none;
+}
+
+.enroll-button {
+    background-color: #28a745;
+    color: #fff;
+}
+
+.enroll-button:hover {
+    background-color: #218838;
+}
+
+.unenroll-button {
+    background-color: #dc3545;
+    color: #fff;
+}
+
+.unenroll-button:hover {
+    background-color: #c82333;
+}
+
+/* Tab Content Styling */
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+    padding-top: 1rem;
+}
+
+/* Welcome Message Styling */
+.welcome-message {
+    font-size: 1.25rem;
+    color: #2f4f6f;
+    font-weight: bold;
+    margin-bottom: 1rem;
+}

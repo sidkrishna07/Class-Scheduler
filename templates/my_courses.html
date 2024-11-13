@@ -1,0 +1,28 @@
+<!-- templates/my_courses.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Courses - Student Enrollment</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>My Enrolled Courses</h1>
+        <ul>
+            {% if courses %}
+                {% for course in courses %}
+                <li>
+                    <strong>{{ course.course_code }} - {{ course.course_name }}</strong>
+                </li>
+                {% endfor %}
+            {% else %}
+                <p>You are not enrolled in any courses yet.</p>
+            {% endif %}
+        </ul>
+        <a href="{{ url_for('student_courses') }}">View All Courses</a>
+        <a href="{{ url_for('logout') }}">Logout</a>
+    </div>
+</body>
+</html>
