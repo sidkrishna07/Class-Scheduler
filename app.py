@@ -53,7 +53,11 @@ admin.add_view(ModelView(Enrollment, db.session))
 def load_user(user_id):
     return User.query.get(int(user_id))
 
+<<<<<<< HEAD
 # Home route
+=======
+
+>>>>>>> dcc6b07 (Added tab.js)
 @app.route('/')
 def home():
     return "<h1>Welcome to the Student Enrollment Web App</h1><p>Please log in to access your courses.</p>"
