@@ -53,11 +53,7 @@ admin.add_view(ModelView(Enrollment, db.session))
 def load_user(user_id):
     return User.query.get(int(user_id))
 
-<<<<<<< HEAD
 # Home route
-=======
-
->>>>>>> dcc6b07 (Added tab.js)
 @app.route('/')
 def home():
     return "<h1>Welcome to the Student Enrollment Web App</h1><p>Please log in to access your courses.</p>"
@@ -133,7 +129,13 @@ def enroll(course_id):
         # Create a new enrollment
         new_enrollment = Enrollment(user_id=current_user.id, course_id=course_id)
         db.session.add(new_enrollment)
+
+        # Increment the enrolled_count for the course
+        course = Course.query.get(course_id)
+        if course:
+            course.enrolled_count += 1
         db.session.commit()
+        
         flash("Enrolled successfully!", "success")
     
     return redirect(url_for('student_courses'))
@@ -149,6 +151,11 @@ def unenroll(course_id):
     # Find the enrollment and delete it
     enrollment = Enrollment.query.filter_by(user_id=current_user.id, course_id=course_id).first()
     if enrollment:
+        # Decrement the enrolled_count for the course
+        course = Course.query.get(course_id)
+        if course and course.enrolled_count > 0:
+            course.enrolled_count -= 1
+
         db.session.delete(enrollment)
         db.session.commit()
         flash("Unenrolled successfully!", "success")
