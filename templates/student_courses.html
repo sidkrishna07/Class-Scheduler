@@ -10,11 +10,14 @@
     <div class="header">
         <h1>Welcome, {{ current_user.username }}!</h1>
         <h2>University of California Merced</h2>
-        <a href="{{ url_for('logout') }}" class="sign-out">Sign out</a>
+        {% if current_user.role == 'student' %}
+            <a href="{{ url_for('student_logout') }}" class="sign-out">Sign out</a>
+        {% elif current_user.role == 'teacher' %}
+            <a href="{{ url_for('teacher_logout') }}" class="sign-out">Sign out</a>
+        {% endif %}
     </div>
 
     <div class="container">
-        <!-- Tabs with Hardcoded Links (No JavaScript Needed) -->
         <div class="tabs">
             <a href="#your-courses" class="tab-button active">Your Courses</a>
             <a href="#add-courses" class="tab-button">Add Courses</a>

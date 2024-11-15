@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher Dashboard</title>
+</head>
+<body>
+    <h1>Welcome, {{ current_user.username }}!</h1>
+    <p>Debug: Current User - {{ current_user }}</p>
+
+    <h2>Your Courses:</h2>
+    <ul>
+        {% for course in courses %}
+        <li>{{ course.name }}</li>
+        {% endfor %}
+    </ul>
+
+    <a href="{{ url_for('teacher_logout') }}">Logout</a>
+
+
+
+
+
+
+</body>
+</html>

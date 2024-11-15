@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Students Enrolled - {{ course.course_name }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Students Enrolled in {{ course.course_name }}</h1>
+        
+        <form method="POST">
+            {% if students %}
+                <table>
+                    <tr>
+                        <th>Student Name</th>
+                        <th>Grade</th>
+                    </tr>
+                    {% for student, enrollment in students %}
+                        <tr>
+                            <td>{{ student.username }}</td>
+                            <td>
+                                <input type="text" name="grade_{{ enrollment.id }}" value="{{ enrollment.grade }}" maxlength="2">
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </table>
+                <button type="submit">Save Grades</button>
+            {% else %}
+                <p>No students are currently enrolled in this course.</p>
+            {% endif %}
+        </form>
+        
+        <a href="{{ url_for('teacher_portal') }}">Back to Teacher Portal</a>
+        <a href="{{ url_for('logout') }}">Logout</a>
+    </div>
+</body>
+</html>
