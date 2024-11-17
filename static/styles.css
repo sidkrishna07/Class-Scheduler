@@ -95,6 +95,7 @@ body {
 }
 
 /* Header Styling */
+/* Header Styling */
 .header {
     width: 100%;
     background-color: #2f4f6f;
@@ -102,11 +103,13 @@ body {
     padding: 1rem 0;
     display: flex;
     justify-content: center;
+    align-items: center;
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
     position: fixed;
     top: 0;
     left: 0;
     z-index: 10;
+    margin-bottom: 20px;
 }
 
 .header-content {
@@ -119,9 +122,23 @@ body {
 }
 
 .header h1, .header h2 {
-    font-size: 1.2rem;
     margin: 0;
     color: #ffdbdb;
+}
+
+.header h1 {
+    font-size: 1.5rem;
+    margin-right: 20px;
+}
+
+.header h2 {
+    font-size: 1.25rem;
+    margin-right: 20px;
+}
+
+.logout-container {
+    display: flex;
+    align-items: center;
 }
 
 .sign-out {
@@ -131,6 +148,7 @@ body {
     padding: 0.5rem 1rem;
     border-radius: 4px;
     background-color: #4f6f8f;
+    padding-left: 10px;
 }
 
 .sign-out:hover {
@@ -242,4 +260,68 @@ tr:hover {
     color: #2f4f6f;
     font-weight: bold;
     margin-bottom: 1rem;
+    margin-top: 20px;
+}
+
+/* Landing Page Styles */
+.welcome-box {
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(47, 79, 111, 0.1);
+    padding: 2.5rem;
+    max-width: 600px;
+    width: 90%;
+    text-align: center;
+    animation: fadeIn 0.5s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.welcome-box h1 {
+    color: #2f4f6f;
+    margin: 0 0 1.5rem 0;
+    font-size: 2.5rem;
+    font-weight: bold;
+}
+
+.welcome-box p {
+    color: #5a7a96;
+    font-size: 1.2rem;
+    line-height: 1.6;
+    margin: 0;
+}
+
+.button-container {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin-top: 1.5rem;
+}
+
+.login-button {
+    padding: 0.8rem 1.5rem;
+    color: white;
+    text-decoration: none;
+    border-radius: 6px;
+    font-weight: bold;
+    transition: background-color 0.2s ease;
+}
+
+.student-button {
+    background-color: #467fcf;
+}
+
+.student-button:hover {
+    background-color: #3a6cbf;
+}
+
+.teacher-button {
+    background-color: #28a745;
+}
+
+.teacher-button:hover {
+    background-color: #218838;
 }

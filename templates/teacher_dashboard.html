@@ -4,24 +4,75 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Teacher Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
-    <h1>Welcome, {{ current_user.username }}!</h1>
-    <p>Debug: Current User - {{ current_user }}</p>
+    <div class="header">
+        <h1>Welcome, Teacher!</h1>
+        <a href="{{ url_for('teacher_logout') }}" class="sign-out">Sign out</a>
+    </div>
 
-    <h2>Your Courses:</h2>
-    <ul>
-        {% for course in courses %}
-        <li>{{ course.name }}</li>
+    <div class="container">
+        <h2>Your Courses</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Course</th>
+                    <th>Teacher</th>
+                    <th>Time</th>
+                    <th>Students Enrolled</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for course in courses %}
+                <tr>
+                    <td>{{ course.course_name }}</td>
+                    <td>
+                        {% if course.teacher %}
+                            {{ course.teacher.username }}  <!-- Display teacher's username -->
+                        {% else %}
+                            No teacher assigned
+                        {% endif %}
+                    </td>
+                    <td>{{ course.time }}</td>
+                    <td>{{ course.enrolled_count }}/{{ course.capacity }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    <div class="messages">
+        {% for category, message in messages %}
+        <div class="message {{ category }}">{{ message }}</div>
         {% endfor %}
-    </ul>
-
-    <a href="{{ url_for('teacher_logout') }}">Logout</a>
-
-
-
-
-
-
+    </div>
+    {% endif %}
+    {% endwith %}
+    <form method="POST" action="{{ url_for('assign_teacher') }}">
+        <div class="form-group">
+            <label for="course_id">Select Course:</label>
+            <select name="course_id" id="course_id" class="form-control">
+                {% for course in courses %}
+                    <option value="{{ course.id }}">{{ course.course_name }} ({{ course.course_code }})</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="teacher_id">Select Teacher:</label>
+            <select name="teacher_id" id="teacher_id" class="form-control">
+                {% for teacher in teachers %}
+                    <option value="{{ teacher.id }}">{{ teacher.username }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary">Assign Teacher</button>
+    </form>
+    
+    
+    
 </body>
 </html>
