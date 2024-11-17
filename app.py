@@ -3,7 +3,6 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required, current_user
 from flask_admin import Admin
 from flask_admin.contrib.sqla import ModelView
-from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
 
@@ -23,14 +22,11 @@ admin = Admin(app)
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(150), unique=True, nullable=False)
-    password = db.Column(db.String(150), nullable=False)
+    password = db.Column(db.String(150), nullable=False)  # Plain-text password
     role = db.Column(db.String(50))
 
     def check_password(self, password):
-        return check_password_hash(self.password, password)
-
-    def set_password(self, password):
-        self.password = generate_password_hash(password)
+        return self.password == password  # Simple comparison
 
 # Course model
 class Course(db.Model):
@@ -71,7 +67,7 @@ def login():
         password = request.form['password']
         user = User.query.filter_by(username=username).first()
         
-        if user and user.check_password(password):
+        if user and user.password == password:
             login_user(user)
             session['user_id'] = user.id  # Store user id in session
 
@@ -168,7 +164,7 @@ def teacher_login():
         username = request.form['username']
         password = request.form['password']
         teacher = User.query.filter_by(username=username, role='teacher').first()
-        if teacher and teacher.check_password(password):
+        if teacher and teacher.password == password:
             session['user_id'] = teacher.id
             login_user(teacher)
             return redirect(url_for('teacher_dashboard'))  # Redirect to dashboard
