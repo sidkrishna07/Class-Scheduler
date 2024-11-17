@@ -243,3 +243,66 @@ tr:hover {
     font-weight: bold;
     margin-bottom: 1rem;
 }
+
+/* Landing Page Styles */
+.welcome-box {
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(47, 79, 111, 0.1);
+    padding: 2.5rem;
+    max-width: 600px;
+    width: 90%;
+    text-align: center;
+    animation: fadeIn 0.5s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.welcome-box h1 {
+    color: #2f4f6f;
+    margin: 0 0 1.5rem 0;
+    font-size: 2.5rem;
+    font-weight: bold;
+}
+
+.welcome-box p {
+    color: #5a7a96;
+    font-size: 1.2rem;
+    line-height: 1.6;
+    margin: 0;
+}
+
+.button-container {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin-top: 1.5rem;
+}
+
+.login-button {
+    padding: 0.8rem 1.5rem;
+    color: white;
+    text-decoration: none;
+    border-radius: 6px;
+    font-weight: bold;
+    transition: background-color 0.2s ease;
+}
+
+.student-button {
+    background-color: #467fcf;
+}
+
+.student-button:hover {
+    background-color: #3a6cbf;
+}
+
+.teacher-button {
+    background-color: #28a745;
+}
+
+.teacher-button:hover {
+    background-color: #218838;
+}

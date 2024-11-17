@@ -58,7 +58,27 @@ def load_user(user_id):
 # Routes
 @app.route('/')
 def home():
-    return "<h1>Welcome to the Student Enrollment Web App</h1><p>Please log in to access your courses.</p>"
+    return '''
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Student Enrollment System</title>
+        <link rel="stylesheet" href="/static/styles.css">
+    </head>
+    <body>
+        <div class="welcome-box">
+            <h1>Welcome to the Student Enrollment Web App</h1>
+            <p>Please log in to access your courses.</p>
+            <div class="button-container">
+                <a href="/login" class="login-button student-button">Student Login</a>
+                <a href="/teacher_login" class="login-button teacher-button">Teacher Login</a>
+            </div>
+        </div>
+    </body>
+    </html>
+    '''
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
