@@ -8,13 +8,21 @@
 </head>
 <body>
     <div class="header">
-        <h1>Welcome, {{ current_user.username }}!</h1>
-        <h2>University of California Merced</h2>
-        {% if current_user.role == 'student' %}
-            <a href="{{ url_for('student_logout') }}" class="sign-out">Sign out</a>
-        {% elif current_user.role == 'teacher' %}
-            <a href="{{ url_for('teacher_logout') }}" class="sign-out">Sign out</a>
-        {% endif %}
+        <div class="header-content">
+            <div class="welcome-container">
+                <h1>Welcome, {{ current_user.username }}!</h1>
+            </div>
+            <div class="university-container">
+                <h2>UC Registration</h2>
+            </div>
+            <div class="logout-container">
+                {% if current_user.role == 'student' %}
+                    <a href="{{ url_for('student_logout') }}" class="sign-out">Sign out</a>
+                {% elif current_user.role == 'teacher' %}
+                    <a href="{{ url_for('teacher_logout') }}" class="sign-out">Sign out</a>
+                {% endif %}
+            </div>
+        </div>
     </div>
 
     <div class="container">
