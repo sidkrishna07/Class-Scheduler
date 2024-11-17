@@ -1,0 +1,37 @@
+teacher-students.html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Students Enrolled in Your Courses</title>
+</head>
+<body>
+    <h1>Students Enrolled in Your Courses</h1>
+
+    {% if students %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Student Name</th>
+                    <th>Course Name</th>
+                    <th>Course Code</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for student, course in students %}
+                <tr>
+                    <td>{{ student.username }}</td>
+                    <td>{{ course.course_name }}</td>
+                    <td>{{ course.course_code }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No students are currently enrolled in your courses.</p>
+    {% endif %}
+
+    <a href="{{ url_for('teacher_dashboard') }}">Back to Dashboard</a>
+</body>
+</html>
