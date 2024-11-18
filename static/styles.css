@@ -313,6 +313,18 @@ tr:hover {
 .student-button {
     background-color: #467fcf;
 }
+.admin-button {
+    padding: 0.8rem 1.5rem;
+    color: white;
+    text-decoration: none;
+    border-radius: 6px;
+    font-weight: bold;
+    background-color: #000000; /* Black background */
+    transition: background-color 0.2s ease;
+}
+.admin-button:hover {
+    background-color: #333333; /* Darker black for hover effect */
+}
 
 .student-button:hover {
     background-color: #3a6cbf;
