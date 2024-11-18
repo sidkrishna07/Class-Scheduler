@@ -160,18 +160,19 @@ def student_courses():
 
     # Query to fetch all courses along with the teacher's username
     courses = db.session.query(
-        Course.id.label("id"),                 # Course ID
-        Course.course_name.label("course_name"),  # Course Name
-        User.username.label("teacher"),        # Teacher's Username
-        Course.time.label("time"),             # Course Timing
-        Course.enrolled_count.label("enrolled_count"),  # Students Enrolled
-        Course.capacity.label("capacity")      # Maximum Students
+        Course.id.label("id"),
+        Course.course_name.label("course_name"),
+        User.username.label("teacher"),
+        Course.time.label("time"),
+        Course.enrolled_count.label("enrolled_count"),
+        Course.capacity.label("capacity")
     ).join(User, Course.teacher_id == User.id).all()
 
     # Fetch enrolled course IDs for the current user
     enrolled_course_ids = [enrollment.course_id for enrollment in Enrollment.query.filter_by(user_id=current_user.id).all()]
 
     return render_template('student_courses.html', courses=courses, enrolled_course_ids=enrolled_course_ids)
+
 
 
 
