@@ -114,9 +114,22 @@ def student_courses():
         flash("Access denied: Only students can view this page.", "danger")
         return redirect(url_for('login'))  # Redirect to login if not a student
 
-    courses = Course.query.all()
+    # Query to fetch all courses along with the teacher's username
+    courses = db.session.query(
+        Course.id.label("id"),                 # Course ID
+        Course.course_name.label("course_name"),  # Course Name
+        User.username.label("teacher"),        # Teacher's Username
+        Course.time.label("time"),             # Course Timing
+        Course.enrolled_count.label("enrolled_count"),  # Students Enrolled
+        Course.capacity.label("capacity")      # Maximum Students
+    ).join(User, Course.teacher_id == User.id).all()
+
+    # Fetch enrolled course IDs for the current user
     enrolled_course_ids = [enrollment.course_id for enrollment in Enrollment.query.filter_by(user_id=current_user.id).all()]
+
     return render_template('student_courses.html', courses=courses, enrolled_course_ids=enrolled_course_ids)
+
+
 
 @app.route('/student/my_courses')
 @login_required
