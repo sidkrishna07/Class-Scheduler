@@ -229,7 +229,7 @@ def unenroll(course_id):
 def student_logout():
     logout_user()  # Log the student out
     session.pop('user_id', None)  # Clear session
-    return redirect(url_for('login'))  # Redirect to login page
+    return redirect(url_for('home'))  # Redirect to the main page
 
 @app.route('/teacher_login', methods=['GET', 'POST'])
 def teacher_login():
@@ -391,9 +391,11 @@ def edit_grades(course_id):
 
     return redirect(url_for('teacher_dashboard'))
 @app.route('/teacher_logout')
+@login_required
 def teacher_logout():
-    session.clear()  
-    return redirect(url_for('teacher_login'))  
+    logout_user()  # Log the teacher out
+    session.pop('user_id', None)  # Clear session
+    return redirect(url_for('home'))  # Redirect to the main page
 
 @app.route('/admin_login', methods=['GET', 'POST'])
 def admin_login():
