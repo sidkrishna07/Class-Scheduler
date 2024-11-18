@@ -1,4 +1,4 @@
-#!/Users/jason/Desktop/Lab8/Class-Scheduler/venv/bin/python3
+#!/Users/jason/Desktop/Lab8/Class-Scheduler/venv/bin/python
 # -*- coding: utf-8 -*-
 import re
 import sys
