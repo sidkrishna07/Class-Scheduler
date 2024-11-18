@@ -20,15 +20,15 @@ login_manager.login_view = 'login'
 # Admin interface setup
 admin = Admin(app)
 
-# User model
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(150), unique=True, nullable=False)
-    password = db.Column(db.String(150), nullable=False)  # Plain-text password
-    role = db.Column(db.String(50))
+    password = db.Column(db.String(150), nullable=False)
+    role = db.Column(db.String(50))  
 
     def check_password(self, password):
-        return self.password == password  # Simple comparison
+        return self.password == password
+
 
 class Course(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -77,6 +77,7 @@ def home():
             <div class="button-container">
                 <a href="/login" class="login-button student-button">Student Login</a>
                 <a href="/teacher_login" class="login-button teacher-button">Teacher Login</a>
+                <a href="/admin_login" class="login-button admin-button">Admin Login</a>
             </div>
         </div>
     </body>
@@ -351,6 +352,39 @@ def edit_grades(course_id):
 def teacher_logout():
     session.clear()  
     return redirect(url_for('teacher_login'))  
+
+@app.route('/admin_login', methods=['GET', 'POST'])
+def admin_login():
+    # Check if the user is already logged in and is an admin
+    if current_user.is_authenticated and current_user.role == 'admin':
+        return redirect('/admin')  # Redirect to Flask-Admin dashboard if already logged in
+    
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        admin = User.query.filter_by(username=username, role='admin').first()
+
+        if admin and admin.check_password(password):
+            login_user(admin)
+            flash("Logged in as Admin successfully!", "success")
+            return redirect('/admin')  # Redirect to Flask-Admin dashboard upon successful login
+        else:
+            flash("Invalid credentials", "danger")
+
+    return render_template('admin_login.html')  # Admin login form
+
+
+@app.route('/admin_logout')
+@login_required
+def admin_logout():
+    if current_user.role != 'admin':
+        flash("Access denied: Only admins can log out.", "danger")
+        return redirect(url_for('login'))
+
+    logout_user()  # Logs out the current user
+    flash("Logged out successfully.", "success")
+    return redirect(url_for('admin_login'))  # Redirect to admin login page
+
 
 if __name__ == '__main__':
     app.run(debug=True) 
