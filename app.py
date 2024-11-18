@@ -11,7 +11,7 @@ from wtforms.fields import SelectField
 app = Flask(__name__)
 
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///enrollment.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///enrollment.db?mode=rw'
 app.config['SECRET_KEY'] = 'your_secret_key'
 
 
