@@ -5,14 +5,16 @@ from flask_admin import Admin
 from flask_admin.base import MenuLink
 from flask_admin.contrib.sqla import ModelView
 from flask_migrate import Migrate
+from flask_admin.form import Select2Widget
+from wtforms.fields import SelectField
 
 app = Flask(__name__)
 
-# Configuration
+
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///enrollment.db'
 app.config['SECRET_KEY'] = 'your_secret_key'
 
-# Database and Login Manager initialization
+
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 login_manager = LoginManager(app)
@@ -46,13 +48,36 @@ class Enrollment(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     grade = db.Column(db.String(5))
 
+    # Define relationships
+    user = db.relationship('User', backref='enrollments', lazy=True)
+    course = db.relationship('Course', backref='enrollments', lazy=True)
+
 
 #FlaskAdmin Setup
 admin = Admin(app, name='Admin Panel', template_mode='bootstrap4')
-admin.add_view(ModelView(User, db.session))
-admin.add_view(ModelView(Course, db.session))
-admin.add_view(ModelView(Enrollment, db.session))
+class EnrollmentView(ModelView):
+    # Specify which columns to display in the admin panel
+    column_list = ('user.username', 'course.course_name', 'grade')
+
+    # Enable searching by related fields
+    column_searchable_list = ('user.username', 'course.course_name')
+
+    # Enable sorting
+    column_sortable_list = ('user.username', 'course.course_name', 'grade')
+
+    # Configure column labels
+    column_labels = {
+        'user.username': 'Student',
+        'course.course_name': 'Course',
+        'grade': 'Grade'
+    }
+
+
+admin.add_view(ModelView(User, db.session, endpoint='admin_user'))
+admin.add_view(ModelView(Course, db.session, endpoint='admin_course'))
+admin.add_view(EnrollmentView(Enrollment, db.session, endpoint='admin_enrollment'))  
 admin.add_link(MenuLink(name='Logout', endpoint='admin_logout'))
+
 
 # User loader callback for login
 @login_manager.user_loader
