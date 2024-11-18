@@ -2,6 +2,7 @@ from flask import Flask, render_template, redirect, url_for, request, flash, ses
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, login_user, logout_user, login_required, current_user
 from flask_admin import Admin
+from flask_admin.base import MenuLink
 from flask_admin.contrib.sqla import ModelView
 from flask_migrate import Migrate
 
@@ -17,8 +18,6 @@ migrate = Migrate(app, db)
 login_manager = LoginManager(app)
 login_manager.login_view = 'login'
 
-# Admin interface setup
-admin = Admin(app)
 
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -48,10 +47,12 @@ class Enrollment(db.Model):
     grade = db.Column(db.String(5))
 
 
-# Add models to the admin interface
+#FlaskAdmin Setup
+admin = Admin(app, name='Admin Panel', template_mode='bootstrap4')
 admin.add_view(ModelView(User, db.session))
 admin.add_view(ModelView(Course, db.session))
 admin.add_view(ModelView(Enrollment, db.session))
+admin.add_link(MenuLink(name='Logout', endpoint='admin_logout'))
 
 # User loader callback for login
 @login_manager.user_loader
@@ -399,39 +400,37 @@ def teacher_logout():
 
 @app.route('/admin_login', methods=['GET', 'POST'])
 def admin_login():
-    # Check if the user is already logged in and is an admin
     if current_user.is_authenticated and current_user.role == 'admin':
         return redirect('/admin')  # Redirect to Flask-Admin dashboard if already logged in
-    
+
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
-        admin = User.query.filter_by(username=username, role='admin').first()
+        admin_user = User.query.filter_by(username=username, role='admin').first()
 
-        if admin and admin.check_password(password):
-            login_user(admin)
+        if admin_user and admin_user.check_password(password):
+            login_user(admin_user)
             flash("Logged in as Admin successfully!", "success")
-            return redirect('/admin')  # Redirect to Flask-Admin dashboard upon successful login
+            return redirect('/admin')  # Redirect to Flask-Admin dashboard
         else:
             flash("Invalid credentials", "danger")
 
-    return render_template('admin_login.html')  # Admin login form
-
+    return render_template('admin_login.html')
 
 @app.route('/admin_logout')
 @login_required
 def admin_logout():
-    if current_user.role != 'admin':
+    if not current_user.is_authenticated or current_user.role != 'admin':
         flash("Access denied: Only admins can log out.", "danger")
-        return redirect(url_for('login'))
+        return redirect(url_for('login'))  # Redirect to login if not an admin
 
     logout_user()  # Logs out the current user
     flash("Logged out successfully.", "success")
-    return redirect(url_for('admin_login'))  # Redirect to admin login page
-
+    return redirect(url_for('home'))  # Redirect to the homepage
 
 if __name__ == '__main__':
-    app.run(host="127.0.0.1", port=5000, debug=True) 
+    app.run(host="127.0.0.1", port=5000, debug=True)
+
 
 
     
