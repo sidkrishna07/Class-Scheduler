@@ -41,12 +41,12 @@ class Course(db.Model):
     enrolled_count = db.Column(db.Integer, default=0)
 
 
-# Enrollment model
 class Enrollment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     course_id = db.Column(db.Integer, db.ForeignKey('course.id'), nullable=False)
-    grade = db.Column(db.String(2))
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    grade = db.Column(db.String(5))
+
 
 # Add models to the admin interface
 admin.add_view(ModelView(User, db.session))
@@ -174,21 +174,33 @@ def enroll(course_id):
         flash("Access denied: Only students can enroll in courses.", "danger")
         return redirect(url_for('login'))
 
+    course = Course.query.get(course_id)
+    if not course:
+        flash("Course not found.", "danger")
+        return redirect(url_for('student_courses'))
+
+   
+    if course.enrolled_count >= course.capacity:
+        flash("Cannot enroll: The course is full.", "danger")
+        return redirect(url_for('student_courses'))
+
+   
     existing_enrollment = Enrollment.query.filter_by(user_id=current_user.id, course_id=course_id).first()
     if existing_enrollment:
         flash("You are already enrolled in this course.", "info")
     else:
+        
         new_enrollment = Enrollment(user_id=current_user.id, course_id=course_id)
         db.session.add(new_enrollment)
 
-        course = Course.query.get(course_id)
-        if course:
-            course.enrolled_count += 1
-        db.session.commit()
         
+        course.enrolled_count += 1
+        db.session.commit()
+
         flash("Enrolled successfully!", "success")
     
     return redirect(url_for('student_courses'))
+
 
 @app.route('/unenroll/<int:course_id>')
 @login_required
@@ -260,7 +272,6 @@ def assign_teacher():
 
     return redirect(url_for('teacher_dashboard'))
 
-
 @app.route('/teacher_dashboard', methods=['GET', 'POST'])
 @login_required
 def teacher_dashboard():
@@ -268,51 +279,69 @@ def teacher_dashboard():
         flash("Access denied: Only teachers can view this page.", "danger")
         return redirect(url_for('login'))
 
+    # Fetch only the courses assigned to the logged-in teacher
     teacher_courses = Course.query.filter_by(teacher_id=current_user.id).all()
-    
-    # Fetch all courses and all teachers
-    courses = Course.query.all()
-    teachers = User.query.filter_by(role='teacher').all()
 
     if request.method == 'POST':
-        # Handle the POST request when the form is submitted
-        course_id = int(request.form['course_id'])
-        teacher_id = int(request.form['teacher_id'])
+        # Handle course assignment functionality
+        flash("Feature not available.", "danger")
+        return redirect(url_for('teacher_dashboard'))  
 
-        # Assign the selected teacher to the selected course
-        selected_course = Course.query.get(course_id)
-        selected_teacher = User.query.get(teacher_id)
-
-        if selected_course and selected_teacher:
-            selected_course.teacher_id = selected_teacher.id
-            db.session.commit()
-            flash(f"Teacher {selected_teacher.username} assigned to {selected_course.course_name} successfully.", "success")
-        else:
-            flash("Error: Course or Teacher not found.", "danger")
-        
-        return redirect(url_for('teacher_dashboard'))  # After processing the form, reload the teacher dashboard
-
-    return render_template('teacher_dashboard.html', courses=courses, teachers=teachers)
+    return render_template('teacher_dashboard.html', courses=teacher_courses)
 
 
 
-
-
-@app.route('/teacher/course/<int:course_id>/students')
+@app.route('/teacher/course/<int:course_id>/students', methods=['GET', 'POST'])
 @login_required
 def view_students(course_id):
     if current_user.role != 'teacher':
         flash("Access denied: Only teachers can view this page.", "danger")
         return redirect(url_for('login'))
-
     course = Course.query.filter_by(id=course_id, teacher_id=current_user.id).first()
     if not course:
-        flash("You do not have permission to view this course.", "danger")
+        flash("You do not have permission to view students for this course.", "danger")
         return redirect(url_for('teacher_dashboard'))
+
+    if request.method == 'POST':
+       
+        for enrollment_id, grade in request.form.items():
+            enrollment = Enrollment.query.get(int(enrollment_id))
+            if enrollment and enrollment.course_id == course_id:
+                enrollment.grade = grade
+        db.session.commit()
+        flash("Grades updated successfully!", "success")
+        return redirect(url_for('view_students', course_id=course_id))
 
     enrollments = Enrollment.query.filter_by(course_id=course.id).all()
     students = [(User.query.get(enrollment.user_id), enrollment) for enrollment in enrollments]
     return render_template('students_enrolled.html', course=course, students=students)
+
+@app.route('/teacher/course/<int:course_id>/grades')
+@login_required
+def view_grades(course_id):
+    # Ensure the user is a teacher
+    if current_user.role != 'teacher':
+        flash("Access denied: Only teachers can view grades.", "danger")
+        return redirect(url_for('login'))
+
+    # Ensure the course exists and belongs to the teacher
+    course = Course.query.filter_by(id=course_id, teacher_id=current_user.id).first()
+    if not course:
+        flash("You do not have permission to view grades for this course.", "danger")
+        return redirect(url_for('teacher_dashboard'))
+
+    # Retrieve enrolled students and their grades
+    enrollments = Enrollment.query.filter_by(course_id=course.id).all()
+    students_with_grades = [
+        {
+            "student": User.query.get(enrollment.user_id),
+            "grade": enrollment.grade  # Assuming the `Enrollment` model has a `grade` column
+        }
+        for enrollment in enrollments
+    ]
+
+    # Render the grades page
+    return render_template('grades.html', course=course, students_with_grades=students_with_grades)
 
 @app.route('/teacher/students')
 @login_required
