@@ -56,20 +56,40 @@ class Enrollment(db.Model):
 
 admin = Admin(app, name='Admin Panel', template_mode='bootstrap4')
 class EnrollmentView(ModelView):
+    # Display columns
     column_list = ('user.username', 'course.course_name', 'grade')
-
-    
-    column_searchable_list = ('user.username', 'course.course_name')
-
-    
-    column_sortable_list = ('user.username', 'course.course_name', 'grade')
-
     column_labels = {
         'user.username': 'Student',
         'course.course_name': 'Course',
         'grade': 'Grade'
     }
 
+    # Allow searching by related fields
+    column_searchable_list = ('user.username', 'course.course_name')
+
+    # Sortable fields
+    column_sortable_list = ('user.username', 'course.course_name', 'grade')
+
+    # Define custom form fields for editing foreign key relationships
+    form_overrides = {
+        'user_id': SelectField,
+        'course_id': SelectField,
+    }
+
+    with app.app_context():
+        form_args = {
+            'user_id': {
+                'label': 'Student',
+                'choices': [(u.id, u.username) for u in User.query.all()]
+            },
+            'course_id': {
+                'label': 'Course',
+                'choices': [(c.id, c.course_name) for c in Course.query.all()]
+            },
+        }
+
+    # List of columns to edit (map foreign keys to custom fields)
+    form_columns = ['user_id', 'course_id', 'grade']
 
 admin.add_view(ModelView(User, db.session, endpoint='admin_user'))
 admin.add_view(ModelView(Course, db.session, endpoint='admin_course'))
