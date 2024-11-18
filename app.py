@@ -23,8 +23,8 @@ login_manager.login_view = 'login'
 
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(150), unique=True, nullable=False)
-    password = db.Column(db.String(150), nullable=False)
+    username = db.Column(db.String(150))
+    password = db.Column(db.String(150))
     role = db.Column(db.String(50))  
 
     def check_password(self, password):
@@ -33,19 +33,19 @@ class User(UserMixin, db.Model):
 
 class Course(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    course_code = db.Column(db.String(10), unique=True, nullable=False)
-    course_name = db.Column(db.String(100), nullable=False)
-    capacity = db.Column(db.Integer, nullable=False)
+    course_code = db.Column(db.String(10))
+    course_name = db.Column(db.String(100))
+    capacity = db.Column(db.Integer)
     teacher_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
     teacher = db.relationship('User', backref='teaching_courses', foreign_keys=[teacher_id])
-    time = db.Column(db.String(50), nullable=True)
+    time = db.Column(db.String(50))
     enrolled_count = db.Column(db.Integer, default=0)
 
 
 class Enrollment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    course_id = db.Column(db.Integer, db.ForeignKey('course.id'), nullable=False)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    course_id = db.Column(db.Integer, db.ForeignKey('course.id'))
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     grade = db.Column(db.String(5))
 
     # Define relationships
@@ -53,19 +53,17 @@ class Enrollment(db.Model):
     course = db.relationship('Course', backref='enrollments', lazy=True)
 
 
-#FlaskAdmin Setup
+
 admin = Admin(app, name='Admin Panel', template_mode='bootstrap4')
 class EnrollmentView(ModelView):
-    # Specify which columns to display in the admin panel
     column_list = ('user.username', 'course.course_name', 'grade')
 
-    # Enable searching by related fields
+    
     column_searchable_list = ('user.username', 'course.course_name')
 
-    # Enable sorting
+    
     column_sortable_list = ('user.username', 'course.course_name', 'grade')
 
-    # Configure column labels
     column_labels = {
         'user.username': 'Student',
         'course.course_name': 'Course',
