@@ -475,10 +475,6 @@ def admin_logout():
 
     logout_user()  # Logs out the current user
     flash("Logged out successfully.", "success")
-    return redirect(url_for('admin_login'))  # Redirect to admin login page
-
-    logout_user()  # Logs out the current user
-    flash("Logged out successfully.", "success")
     return redirect(url_for('home'))  # Redirect to the homepage
 
 if __name__ == '__main__':

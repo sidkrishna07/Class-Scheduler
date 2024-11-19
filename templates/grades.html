@@ -18,7 +18,6 @@
             <thead>
                 <tr>
                     <th>Student Name</th>
-                    <th>Email</th>
                     <th>Grade</th>
                 </tr>
             </thead>
@@ -26,7 +25,6 @@
                 {% for entry in students_with_grades %}
                 <tr>
                     <td>{{ entry.student.username }}</td>
-                    <td>{{ entry.student.email }}</td>
                     <td>{{ entry.grade if entry.grade is not none else "Not Graded" }}</td>
                 </tr>
                 {% endfor %}
