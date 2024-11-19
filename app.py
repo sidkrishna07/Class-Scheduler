@@ -5,33 +5,31 @@ from flask_admin import Admin
 from flask_admin.base import MenuLink
 from flask_admin.contrib.sqla import ModelView
 from flask_migrate import Migrate
+from flask_admin.form import Select2Widget
 from wtforms.fields import SelectField
 from wtforms import Form, SelectField
 
 app = Flask(__name__)
 
-# Configurations
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///enrollment.db'
+
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///enrollment.db?mode=rw'
 app.config['SECRET_KEY'] = 'your_secret_key'
 
-# Extensions
+
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 login_manager = LoginManager(app)
 login_manager.login_view = 'login'
 
-# Models
+
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(150))
     password = db.Column(db.String(150))
-    role = db.Column(db.String(50))
+    role = db.Column(db.String(50))  
 
     def check_password(self, password):
-        return self.password == password  # Replace with hashing for production!
-
-    def __str__(self):
-        return self.username  # Ensures username displays in admin panels
+        return self.password == password
 
 
 class Course(db.Model):
@@ -54,7 +52,6 @@ class Enrollment(db.Model):
     user = db.relationship('User', backref='enrollments')
     course = db.relationship('Course', backref='enrollments', lazy=True)
 
-# Admin Panel
 admin = Admin(app, name='Admin Panel', template_mode='bootstrap4')
 
 
@@ -103,7 +100,8 @@ admin.add_view(ModelView(Course, db.session, endpoint='admin_course'))
 admin.add_view(EnrollmentView(Enrollment, db.session, endpoint='admin_enrollment'))
 admin.add_link(MenuLink(name='Logout', endpoint='admin_logout'))
 
-# Login Manager
+
+# User loader callback for login
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
@@ -468,7 +466,6 @@ def admin_login():
 
     return render_template('admin_login.html')  # Admin login form
 
-
 @app.route('/admin_logout')
 @login_required
 def admin_logout():
@@ -480,6 +477,9 @@ def admin_logout():
     flash("Logged out successfully.", "success")
     return redirect(url_for('admin_login'))  # Redirect to admin login page
 
+    logout_user()  # Logs out the current user
+    flash("Logged out successfully.", "success")
+    return redirect(url_for('home'))  # Redirect to the homepage
 
 if __name__ == '__main__':
     app.run(debug=True) 
