@@ -31,7 +31,7 @@
                     <td>{{ course.course_name }}</td>
                     <td>
                         {% if course.teacher %}
-                            {{ course.teacher.username }} <!-- Display teacher's username -->
+                            {{ course.teacher.username }}
                         {% else %}
                             No teacher assigned
                         {% endif %}
@@ -39,7 +39,6 @@
                     <td>{{ course.time }}</td>
                     <td>{{ course.enrolled_count }}/{{ course.capacity }}</td>
                     <td>
-                        <!-- Link to view students and grades -->
                         <a href="{{ url_for('view_students', course_id=course.id) }}" class="button view-students">View Students</a>
                     <td>
                         <a href="{{ url_for('view_grades', course_id=course.id) }}" class="button view-grades">View Grades</a>

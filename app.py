@@ -11,16 +11,13 @@ from wtforms import Form, SelectField
 
 app = Flask(__name__)
 
-
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///enrollment.db?mode=rw'
 app.config['SECRET_KEY'] = 'your_secret_key'
-
 
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 login_manager = LoginManager(app)
 login_manager.login_view = 'login'
-
 
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -31,7 +28,6 @@ class User(UserMixin, db.Model):
     def check_password(self, password):
         return self.password == password
 
-
 class Course(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     course_code = db.Column(db.String(10))
@@ -41,7 +37,6 @@ class Course(db.Model):
     teacher = db.relationship('User', backref='teaching_courses', foreign_keys=[teacher_id])
     time = db.Column(db.String(50))
     enrolled_count = db.Column(db.Integer, default=0)
-
 
 class Enrollment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -54,60 +49,41 @@ class Enrollment(db.Model):
 
 admin = Admin(app, name='Admin Panel', template_mode='bootstrap4')
 
-
 class EnrollmentForm(Form):
     user_id = SelectField('User', coerce=int)
     course_id = SelectField('Course', coerce=int)
 
 class EnrollmentView(ModelView):
-    # Ensure the form is explicitly defined and properly referenced
     form = EnrollmentForm
-
-    # Override fields in the form to use SelectField for user_id and course_id
     form_overrides = {
         'user_id': SelectField,
         'course_id': SelectField,
     }
-
-    # Define the columns that will be displayed in the list view
     column_list = ('user.username', 'course.course_name', 'grade')
     column_labels = {
         'user.username': 'Student',
         'course.course_name': 'Course',
         'grade': 'Grade'
     }
-
-    # Enable searching by student and course name
     column_searchable_list = ('user.username', 'course.course_name')
     column_sortable_list = ('user.username', 'course.course_name', 'grade')
 
-    # Prefill the form with valid choices for user_id and course_id when editing
     def on_form_prefill(self, form, id):
-        # Ensure that we populate the SelectField choices for both user_id and course_id
         form.user_id.choices = [(u.id, u.username) for u in User.query.all()]
         form.course_id.choices = [(c.id, c.course_name) for c in Course.query.all()]
 
-    # Additional validation can be added here if necessary
     def validate_form(self, form):
-        # Custom validation logic, if any
         pass
-
-
-
 
 admin.add_view(ModelView(User, db.session, endpoint='admin_user'))
 admin.add_view(ModelView(Course, db.session, endpoint='admin_course'))
 admin.add_view(EnrollmentView(Enrollment, db.session, endpoint='admin_enrollment'))
 admin.add_link(MenuLink(name='Logout', endpoint='admin_logout'))
 
-
-# User loader callback for login
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
 
-
-# Routes
 @app.route('/')
 def home():
     return '''
@@ -142,12 +118,12 @@ def login():
         
         if user and user.password == password:
             login_user(user)
-            session['user_id'] = user.id  # Store user id in session
+            session['user_id'] = user.id
 
             if user.role == 'student':
-                return redirect(url_for('student_courses'))  # Redirect to student courses
+                return redirect(url_for('student_courses'))
             elif user.role == 'teacher':
-                return redirect(url_for('teacher_dashboard'))  # Redirect to teacher dashboard
+                return redirect(url_for('teacher_dashboard'))
             else:
                 flash('Invalid user role', 'danger')
                 return redirect(url_for('login'))
@@ -161,24 +137,20 @@ def login():
 def student_courses():
     if current_user.role != 'student':
         flash("Access denied: Only students can view this page.", "danger")
-        return redirect(url_for('login'))  # Redirect to login if not a student
+        return redirect(url_for('login'))
 
-    # Query to fetch all courses along with the teacher's username
     courses = db.session.query(
-        Course.id.label("id"),                 # Course ID
-        Course.course_name.label("course_name"),  # Course Name
-        User.username.label("teacher"),        # Teacher's Username
-        Course.time.label("time"),             # Course Timing
-        Course.enrolled_count.label("enrolled_count"),  # Students Enrolled
-        Course.capacity.label("capacity")      # Maximum Students
+        Course.id.label("id"),
+        Course.course_name.label("course_name"),
+        User.username.label("teacher"),
+        Course.time.label("time"),
+        Course.enrolled_count.label("enrolled_count"),
+        Course.capacity.label("capacity")
     ).join(User, Course.teacher_id == User.id).all()
 
-    # Fetch enrolled course IDs for the current user
     enrolled_course_ids = [enrollment.course_id for enrollment in Enrollment.query.filter_by(user_id=current_user.id).all()]
 
     return render_template('student_courses.html', courses=courses, enrolled_course_ids=enrolled_course_ids)
-
-
 
 @app.route('/student/my_courses')
 @login_required
@@ -228,28 +200,22 @@ def enroll(course_id):
         flash("Course not found.", "danger")
         return redirect(url_for('student_courses'))
 
-   
     if course.enrolled_count >= course.capacity:
         flash("Cannot enroll: The course is full.", "danger")
         return redirect(url_for('student_courses'))
 
-   
     existing_enrollment = Enrollment.query.filter_by(user_id=current_user.id, course_id=course_id).first()
     if existing_enrollment:
         flash("You are already enrolled in this course.", "info")
     else:
-        
         new_enrollment = Enrollment(user_id=current_user.id, course_id=course_id)
         db.session.add(new_enrollment)
-
-        
         course.enrolled_count += 1
         db.session.commit()
 
         flash("Enrolled successfully!", "success")
     
     return redirect(url_for('student_courses'))
-
 
 @app.route('/unenroll/<int:course_id>')
 @login_required
@@ -272,18 +238,17 @@ def unenroll(course_id):
     
     return redirect(url_for('student_courses'))
 
-
 @app.route('/student_logout')
 @login_required
 def student_logout():
-    logout_user()  # Log the student out
-    session.pop('user_id', None)  # Clear session
-    return redirect(url_for('home'))  # Redirect to the main page
+    logout_user()
+    session.pop('user_id', None)
+    return redirect(url_for('home'))
 
 @app.route('/teacher_login', methods=['GET', 'POST'])
 def teacher_login():
     if current_user.is_authenticated:
-        return redirect(url_for('teacher_dashboard'))  # Redirect to dashboard if logged in
+        return redirect(url_for('teacher_dashboard'))
     
     if request.method == 'POST':
         username = request.form['username']
@@ -292,12 +257,11 @@ def teacher_login():
 
         if teacher and teacher.check_password(password):
             login_user(teacher)
-            return redirect(url_for('teacher_dashboard'))  # Redirect to dashboard
+            return redirect(url_for('teacher_dashboard'))
         else:
             flash("Invalid credentials", "danger")
 
     return render_template('teacher_login.html')
-
 
 @app.route('/assign_teacher', methods=['POST'])
 @login_required
@@ -313,7 +277,7 @@ def assign_teacher():
     selected_teacher = User.query.get(teacher_id)
 
     if selected_course and selected_teacher:
-        selected_course.teacher_id = selected_teacher.id  # Assign the teacher
+        selected_course.teacher_id = selected_teacher.id
         db.session.commit()
         flash(f"Teacher {selected_teacher.username} assigned to {selected_course.course_name} successfully.", "success")
     else:
@@ -328,17 +292,13 @@ def teacher_dashboard():
         flash("Access denied: Only teachers can view this page.", "danger")
         return redirect(url_for('login'))
 
-    # Fetch only the courses assigned to the logged-in teacher
     teacher_courses = Course.query.filter_by(teacher_id=current_user.id).all()
 
     if request.method == 'POST':
-        # Handle course assignment functionality
         flash("Feature not available.", "danger")
         return redirect(url_for('teacher_dashboard'))  
 
     return render_template('teacher_dashboard.html', courses=teacher_courses)
-
-
 
 @app.route('/teacher/course/<int:course_id>/students', methods=['GET', 'POST'])
 @login_required
@@ -352,7 +312,6 @@ def view_students(course_id):
         return redirect(url_for('teacher_dashboard'))
 
     if request.method == 'POST':
-       
         for enrollment_id, grade in request.form.items():
             enrollment = Enrollment.query.get(int(enrollment_id))
             if enrollment and enrollment.course_id == course_id:
@@ -368,28 +327,24 @@ def view_students(course_id):
 @app.route('/teacher/course/<int:course_id>/grades')
 @login_required
 def view_grades(course_id):
-    # Ensure the user is a teacher
     if current_user.role != 'teacher':
         flash("Access denied: Only teachers can view grades.", "danger")
         return redirect(url_for('login'))
 
-    # Ensure the course exists and belongs to the teacher
     course = Course.query.filter_by(id=course_id, teacher_id=current_user.id).first()
     if not course:
         flash("You do not have permission to view grades for this course.", "danger")
         return redirect(url_for('teacher_dashboard'))
 
-    # Retrieve enrolled students and their grades
     enrollments = Enrollment.query.filter_by(course_id=course.id).all()
     students_with_grades = [
         {
             "student": User.query.get(enrollment.user_id),
-            "grade": enrollment.grade  # Assuming the `Enrollment` model has a `grade` column
+            "grade": enrollment.grade
         }
         for enrollment in enrollments
     ]
 
-    # Render the grades page
     return render_template('grades.html', course=course, students_with_grades=students_with_grades)
 
 @app.route('/teacher/students')
@@ -399,17 +354,15 @@ def teacher_students():
         flash("Access denied: Only teachers can view this page.", "danger")
         return redirect(url_for('login'))
 
-  
     courses = Course.query.filter_by(teacher_id=current_user.id).all()
 
-  
     students = []
     for course in courses:
         enrollments = Enrollment.query.filter_by(course_id=course.id).all()
         for enrollment in enrollments:
             student = User.query.get(enrollment.user_id)
             if student and student.role == 'student':
-                students.append((student, course)) 
+                students.append((student, course))
 
     return render_template('teacher_students.html', students=students)
 
@@ -437,20 +390,19 @@ def edit_grades(course_id):
     enrollments = Enrollment.query.filter_by(course_id=course.id).all()
     return render_template('edit_grades.html', course=course, enrollments=enrollments)
 
-
     return redirect(url_for('teacher_dashboard'))
+
 @app.route('/teacher_logout')
 @login_required
 def teacher_logout():
-    logout_user()  # Log the teacher out
-    session.pop('user_id', None)  # Clear session
-    return redirect(url_for('home'))  # Redirect to the main page
+    logout_user()
+    session.pop('user_id', None)
+    return redirect(url_for('home'))
 
 @app.route('/admin_login', methods=['GET', 'POST'])
 def admin_login():
-    # Check if the user is already logged in and is an admin
     if current_user.is_authenticated and current_user.role == 'admin':
-        return redirect('/admin')  # Redirect to Flask-Admin dashboard if already logged in
+        return redirect('/admin')
     
     if request.method == 'POST':
         username = request.form['username']
@@ -460,11 +412,11 @@ def admin_login():
         if admin and admin.check_password(password):
             login_user(admin)
             flash("Logged in as Admin successfully!", "success")
-            return redirect('/admin')  # Redirect to Flask-Admin dashboard upon successful login
+            return redirect('/admin')
         else:
             flash("Invalid credentials", "danger")
 
-    return render_template('admin_login.html')  # Admin login form
+    return render_template('admin_login.html')
 
 @app.route('/admin_logout')
 @login_required
@@ -473,9 +425,9 @@ def admin_logout():
         flash("Access denied: Only admins can log out.", "danger")
         return redirect(url_for('login'))
 
-    logout_user()  # Logs out the current user
+    logout_user()
     flash("Logged out successfully.", "success")
-    return redirect(url_for('home'))  # Redirect to the homepage
+    return redirect(url_for('home'))
 
 if __name__ == '__main__':
-    app.run(debug=True) 
+    app.run(debug=True)

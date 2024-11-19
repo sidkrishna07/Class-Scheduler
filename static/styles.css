@@ -1,4 +1,3 @@
-/* General Body Styling */
 body {
     font-family: Arial, sans-serif;
     background-color: #e9f0f7;
@@ -9,7 +8,6 @@ body {
     min-height: 100vh;
 }
 
-/* Container Styling */
 .container {
     max-width: 800px;
     width: 100%;
@@ -21,7 +19,6 @@ body {
     margin: 5rem auto 2rem;
 }
 
-/* Container Styling for Login Form */
 .login-container {
     max-width: 400px;
     width: 100%;
@@ -32,7 +29,6 @@ body {
     text-align: center;
 }
 
-/* Login Form Title */
 .login-container h1 {
     font-size: 1.5rem;
     color: #2f4f6f;
@@ -40,7 +36,6 @@ body {
     font-weight: bold;
 }
 
-/* Login Form Styling */
 .login-form {
     display: flex;
     flex-direction: column;
@@ -87,15 +82,12 @@ body {
     background-color: #3a6cbf;
 }
 
-/* Additional Message Styling */
 .login-message {
     font-size: 0.9rem;
     color: #666;
     margin-top: 1rem;
 }
 
-/* Header Styling */
-/* Header Styling */
 .header {
     width: 100%;
     background-color: #2f4f6f;
@@ -156,7 +148,6 @@ body {
     background-color: #3f5f7f;
 }
 
-/* Tabs Styling */
 .tabs {
     display: flex;
     justify-content: center;
@@ -185,7 +176,6 @@ body {
     background-color: #3a6cbf;
 }
 
-/* Table Styling */
 table {
     width: 100%;
     border-collapse: collapse;
@@ -215,7 +205,6 @@ tr:hover {
     background-color: #e0ebf5;
 }
 
-/* Enroll/Unenroll Button Styling */
 .enroll-button, .unenroll-button {
     padding: 0.5rem 1rem;
     border: none;
@@ -244,7 +233,6 @@ tr:hover {
     background-color: #c82333;
 }
 
-/* Tab Content Styling */
 .tab-content {
     display: none;
 }
@@ -254,7 +242,6 @@ tr:hover {
     padding-top: 1rem;
 }
 
-/* Welcome Message Styling */
 .welcome-message {
     font-size: 1.25rem;
     color: #2f4f6f;
@@ -263,7 +250,6 @@ tr:hover {
     margin-top: 20px;
 }
 
-/* Landing Page Styles */
 .welcome-box {
     background-color: white;
     border-radius: 12px;
@@ -319,11 +305,11 @@ tr:hover {
     text-decoration: none;
     border-radius: 6px;
     font-weight: bold;
-    background-color: #000000; /* Black background */
+    background-color: #000000;
     transition: background-color 0.2s ease;
 }
 .admin-button:hover {
-    background-color: #333333; /* Darker black for hover effect */
+    background-color: #333333;
 }
 
 .student-button:hover {

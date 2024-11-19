@@ -7,18 +7,18 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
-    <!-- Header Section -->
+    <div class="header"></div>
     <div class="header">
         <h1>Students Enrolled in {{ course.course_name }}</h1>
-        <!-- Back to Dashboard Button -->
+        
         <a href="{{ url_for('teacher_dashboard') }}" class="back-to-dashboard sign-out">Back to Dashboard</a>
     </div>
 
-    <!-- Main Container -->
+   
     <div class="container">
         <h2>Student Enrollments</h2>
 
-        <!-- Form for Editing Grades -->
+        
         <form method="POST">
             <table>
                 <thead>
@@ -39,12 +39,12 @@
                 </tbody>
             </table>
 
-            <!-- Update Grades Button -->
+            
             <button type="submit">Update Grades</button>
         </form>
     </div>
 
-    <!-- Flash Messages Section -->
+    
     {% with messages = get_flashed_messages(with_categories=true) %}
     {% if messages %}
     <div class="messages">

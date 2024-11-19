@@ -7,18 +7,12 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
-    <!-- Header Section -->
     <div class="header">
         <h1>Grades for {{ course.course_name }}</h1>
-        <!-- Back to Dashboard Button -->
         <a href="{{ url_for('teacher_dashboard') }}" class="back-to-dashboard sign-out">Back to Dashboard</a>
     </div>
-
-    <!-- Main Container -->
     <div class="container">
         <h2>Student Grades</h2>
-
-        <!-- Table Displaying Student Grades -->
         <table>
             <thead>
                 <tr>
@@ -36,8 +30,6 @@
             </tbody>
         </table>
     </div>
-
-    <!-- Flash Messages Section -->
     {% with messages = get_flashed_messages(with_categories=true) %}
     {% if messages %}
     <div class="messages">
