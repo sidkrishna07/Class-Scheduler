@@ -1,4 +1,6 @@
-#!/Users/jason/Desktop/Lab8/Class-Scheduler/venv/bin/python
+#!/bin/sh
+'''exec' "/Users/sidkrishna/Documents/College/Courses/UC Merced/3rd Year/CSE 108/Lab08/Class-Scheduler/venv/bin/python3.13" "$0" "$@"
+' '''
 # -*- coding: utf-8 -*-
 import re
 import sys

@@ -5,9 +5,8 @@ from flask_admin import Admin
 from flask_admin.base import MenuLink
 from flask_admin.contrib.sqla import ModelView
 from flask_migrate import Migrate
-from flask_admin.form import Select2Widget
-from wtforms.fields import SelectField
-from wtforms import Form, SelectField
+from wtforms_sqlalchemy.fields import QuerySelectField  
+from wtforms import Form, StringField 
 
 app = Flask(__name__)
 
@@ -50,15 +49,24 @@ class Enrollment(db.Model):
 admin = Admin(app, name='Admin Panel', template_mode='bootstrap4')
 
 class EnrollmentForm(Form):
-    user_id = SelectField('User', coerce=int)
-    course_id = SelectField('Course', coerce=int)
+    user = QuerySelectField(
+        'User',
+        query_factory=lambda: User.query.all(),
+        get_label='username',
+        allow_blank=False
+    )
+    course = QuerySelectField(
+        'Course',
+        query_factory=lambda: Course.query.all(),
+        get_label='course_name',
+        allow_blank=False
+    )
+    grade = StringField('Grade')  
+
 
 class EnrollmentView(ModelView):
     form = EnrollmentForm
-    form_overrides = {
-        'user_id': SelectField,
-        'course_id': SelectField,
-    }
+    form_columns = ['user', 'course', 'grade']
     column_list = ('user.username', 'course.course_name', 'grade')
     column_labels = {
         'user.username': 'Student',
@@ -68,12 +76,6 @@ class EnrollmentView(ModelView):
     column_searchable_list = ('user.username', 'course.course_name')
     column_sortable_list = ('user.username', 'course.course_name', 'grade')
 
-    def on_form_prefill(self, form, id):
-        form.user_id.choices = [(u.id, u.username) for u in User.query.all()]
-        form.course_id.choices = [(c.id, c.course_name) for c in Course.query.all()]
-
-    def validate_form(self, form):
-        pass
 
 admin.add_view(ModelView(User, db.session, endpoint='admin_user'))
 admin.add_view(ModelView(Course, db.session, endpoint='admin_course'))
